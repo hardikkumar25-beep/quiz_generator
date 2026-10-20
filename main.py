@@ -1,9 +1,10 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
+from core.config import settings
 
 app=FastAPI(title="Quiz Generator",description="Generate Quiz from a given topic",version="0.1.0",docs_url="/docs",redoc_url="/redoc",)
 
-app.add_middleware(CORSMiddleware,allow_origins=["*"],allow_credentials=True,allow_methods=["*"],allow_headers=["*"],)
+app.add_middleware(CORSMiddleware,allow_origins=settings.ALLOWED_ORIGINS,allow_credentials=True,allow_methods=["*"],allow_headers=["*"],)
 
 if __name__=="__main__":
     import uvicorn
