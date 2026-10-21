@@ -5,9 +5,9 @@ from fastapi import APIRouter,Depends,HTTPException,Cookie,Response,BackgroundTa
 from sqlalchemy.orm import Session
 
 from db.database import get_db,SessionLocal
-from models.quiz import Quiz,QuizNode
+from models.quiz import Quiz
 from models.job import QuizJob
-from schemas.quiz import CompleteQuizResponse,CompleteQuizNodeResponse,CreateQuizRequest
+from schemas.quiz import CompleteQuizResponse,CreateQuizRequest
 from schemas.job import QuizJobResponse
 
 router=APIRouter(prefix="/quizzes",tags=["quizzes"])
