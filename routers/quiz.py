@@ -29,7 +29,7 @@ def create_quiz(request: CreateQuizRequest,background_tasks:BackgroundTasks,resp
     db.commit()
     #todo add bg tasks, generate story
     background_tasks.add_task(generate_quiz_task,job_id=job_id,theme=request.theme,session_id=session_id)
-    return job_id
+    return job
 
 def generate_quiz_task(job_id:str,theme:str,session_id:str):
     db=SessionLocal()
