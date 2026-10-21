@@ -7,9 +7,9 @@ class Quiz(Base):
     __tablename__="quizzes"
 
     id=Column(Integer,primary_key=True,index=True)
-    title=Column(String,index=True)
-    session_id=Column(String,index=True)
-    created_at=Column(DateTime(timezone=True),server_default=func.now())
+    title=Column(String,index=True,nullable=False)
+    session_id=Column(String,index=True,nullable=True)
+    created_at=Column(DateTime(timezone=True),server_default=func.now(),nullable=False)
 
     nodes=relationship(argument="QuizNode",back_populates="quiz")
 
@@ -17,11 +17,11 @@ class QuizNode(Base):
     __tablename__="quiz_nodes"
 
     id=Column(Integer,primary_key=True,index=True)
-    quiz_id=Column(Integer,ForeignKey=("quizzes.id"),index=True)
+    quiz_id=Column(Integer,ForeignKey("quizzes.id"),index=True,nullable=False)
     question=Column(String,nullable=False)
     options=Column(JSON,nullable=False)
     correct_answer = Column(String, nullable=False)
-    order = Column(Integer, nullable=False)
+    question_order = Column(Integer, nullable=False)
 
     quiz=relationship(argument="Quiz",back_populates="nodes")
 
