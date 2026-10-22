@@ -8,6 +8,7 @@ class Quiz(Base):
 
     id=Column(Integer,primary_key=True,index=True)
     title=Column(String,index=True,nullable=False)
+    theme = Column(String, nullable=False)
     session_id=Column(String,index=True,nullable=True)
     created_at=Column(DateTime(timezone=True),server_default=func.now(),nullable=False)
 
@@ -22,7 +23,7 @@ class QuizNode(Base):
     options=Column(JSON,nullable=False)
     correct_answer = Column(String, nullable=False)
     question_order = Column(Integer, nullable=False)
-    explanation=Column(String)
+    explanation = Column(String, nullable=True)
 
     quiz=relationship(argument="Quiz",back_populates="nodes")
 

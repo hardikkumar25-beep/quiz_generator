@@ -5,9 +5,9 @@ from fastapi import APIRouter,Depends,HTTPException,Cookie,Response,BackgroundTa
 from sqlalchemy.orm import Session
 
 from db.database import get_db,SessionLocal
-from models.quiz import Quiz
+from models.quiz import Quiz,QuizNode
 from models.job import QuizJob
-from schemas.quiz import CompleteQuizResponse,CreateQuizRequest
+from schemas.quiz import CompleteQuizResponse,CreateQuizRequest,CompleteQuizNodeResponse
 from schemas.job import QuizJobResponse
 from core.quiz_generator import QuizGenerator
 
@@ -61,5 +61,21 @@ def get_complete_quiz(quiz_id:int,db:Session=Depends(get_db)):
     complete_quiz=build_complete_quiz(db,quiz)
     return complete_quiz
 
-def build_complete_quiz(db:Session,quiz:Quiz)->CompleteQuizResponse:
-    pass
+def build_complete_quiz(db: Session,quiz: Quiz) -> CompleteQuizResponse:
+    nodes = (db.query(QuizNode).filter(QuizNode.quiz_id == quiz.id).order_by(QuizNode.question_order).all())
+    node_responses = [
+        CompleteQuizNodeResponse(
+            id=node.id,
+            question=node.question,
+            options=node.options,
+            correct_answer=node.correct_answer,
+            order=node.question_order,
+            explanation=node.explanation
+        ) for node in nodes]
+    return CompleteQuizResponse(
+        id=quiz.id,
+        title=quiz.title,
+        theme=quiz.theme,
+        session_id=quiz.session_id,
+        created_at=quiz.created_at,
+        nodes=node_responses)
