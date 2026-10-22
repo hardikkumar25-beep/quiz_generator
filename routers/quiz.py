@@ -9,6 +9,7 @@ from models.quiz import Quiz
 from models.job import QuizJob
 from schemas.quiz import CompleteQuizResponse,CreateQuizRequest
 from schemas.job import QuizJobResponse
+from core.quiz_generator import QuizGenerator
 
 router=APIRouter(prefix="/quizzes",tags=["quizzes"])
 
@@ -27,21 +28,20 @@ def create_quiz(request: CreateQuizRequest,background_tasks:BackgroundTasks,resp
                 status="pending")
     db.add(job)
     db.commit()
-    #todo add bg tasks, generate story
-    background_tasks.add_task(generate_quiz_task,job_id=job_id,theme=request.theme,session_id=session_id)
+    background_tasks.add_task(generate_quiz_task,job_id=job_id,session_id=session_id,theme=request.theme,num_question=request.num_questions,difficulty=request.difficulty)
     return job
 
-def generate_quiz_task(job_id:str,theme:str,session_id:str):
+def generate_quiz_task(job_id:str,session_id:str,theme:str,num_question:int=10,difficulty:str="medium"):
     db=SessionLocal()
     try:
-        job=db.query(QuizJob),filter(QuizJob.job_id==job_id).first()
+        job=db.query(QuizJob).filter(QuizJob.job_id==job_id).first()
         if not job:
             return
         try:
             job.status="processing"
             db.commit()
-            quiz={} #todo generate quiz
-            job.quiz_id=1 #todo update quiz id
+            quiz=QuizGenerator.generate_quiz(db,session_id,theme,num_question,difficulty) 
+            job.quiz_id=quiz.id
             job.status="completed"
             job.completed_at=datetime.now()
             db.commit()
@@ -55,11 +55,11 @@ def generate_quiz_task(job_id:str,theme:str,session_id:str):
 
 @router.get("{quiz_id}/complete",response_model=CompleteQuizResponse)
 def get_complete_quiz(quiz_id:int,db:Session=Depends(get_db)):
-    quiz=db.query(Quiz),filter(Quiz.id==quiz_id).first()
+    quiz=db.query(Quiz).filter(Quiz.id==quiz_id).first()
     if not quiz:
         raise HTTPException(status_code=404,detail="Quiz not found")
     complete_quiz=build_complete_quiz(db,quiz)
-    return quiz
+    return complete_quiz
 
 def build_complete_quiz(db:Session,quiz:Quiz)->CompleteQuizResponse:
     pass

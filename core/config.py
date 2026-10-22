@@ -9,6 +9,7 @@ class Settings(BaseSettings):
     DATABASE_URL:str
     ALLOWED_ORIGINS:str=""
     OPEN_API_KEY:str
+    OPENROUTER_API_KEY:str
 
     @field_validator("ALLOWED_ORIGINS")
     def parsed_allowed_origins(cls,v:str)->List[str]:
