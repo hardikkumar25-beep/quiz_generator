@@ -22,6 +22,7 @@ class QuizNode(Base):
     options=Column(JSON,nullable=False)
     correct_answer = Column(String, nullable=False)
     question_order = Column(Integer, nullable=False)
+    explanation=Column(String)
 
     quiz=relationship(argument="Quiz",back_populates="nodes")
 
