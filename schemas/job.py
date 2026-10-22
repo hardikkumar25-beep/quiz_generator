@@ -6,7 +6,7 @@ class QuizJobBase(BaseModel):
     theme:str
 
 class QuizJobResponse(BaseModel):
-    job_id:int
+    job_id:str
     status:str
     created_at:datetime
     quiz_id:Optional[int]=None

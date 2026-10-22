@@ -63,6 +63,3 @@ def get_complete_quiz(quiz_id:int,db:Session=Depends(get_db)):
 
 def build_complete_quiz(db:Session,quiz:Quiz)->CompleteQuizResponse:
     pass
-
-
-
