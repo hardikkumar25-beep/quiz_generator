@@ -92,6 +92,7 @@ The goal is to encourage users to continue because they are learning, not becaus
 ## 8. Output Format
 
 Return valid JSON only. Do not include Markdown fences, comments, or introductory text outside the JSON.
+Output your story in this exact JSON structure:{format_instructions}
 
 Use the following structure, matching the application's existing schema:
 
@@ -116,6 +117,7 @@ Use the following structure, matching the application's existing schema:
         }
       ],
       "correct_answer": "The exact text of the correct answer choice",
+      "explanation": "Why the correct answer is correct and what the concept teaches",
       "order": 1
     }
   ]
