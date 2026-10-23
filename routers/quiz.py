@@ -40,6 +40,7 @@ def generate_quiz_task(job_id:str,session_id:str,theme:str,num_question:int=10,d
         try:
             job.status="processing"
             db.commit()
+            print("Starting quiz generation...")
             quiz=QuizGenerator.generate_quiz(db,session_id,theme,num_question,difficulty) 
             job.quiz_id=quiz.id
             job.status="completed"
@@ -67,7 +68,7 @@ def build_complete_quiz(db: Session,quiz: Quiz) -> CompleteQuizResponse:
         CompleteQuizNodeResponse(
             id=node.id,
             question=node.question,
-            options=node.options,
+            option=node.options,
             correct_answer=node.correct_answer,
             order=node.question_order,
             explanation=node.explanation

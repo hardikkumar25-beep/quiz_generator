@@ -37,7 +37,7 @@ class QuizGenerator:
             "format_instructions":quiz_parser.get_format_instructions(),
         })
         try:
-            quiz_db=Quiz(title=quiz_structure.title,session_id=session_id)
+            quiz_db=Quiz(title=quiz_structure.title,theme=quiz_structure.theme,session_id=session_id)
             db.add(quiz_db)
             db.flush()
             for question_data in quiz_structure.questions:

@@ -10,6 +10,7 @@ class QuizNodeBase(BaseModel):
     option:List[QuizOptionsSchema]
     correct_answer:str
     order:Optional[int]=None
+    explanation:str
 
 class CompleteQuizNodeResponse(QuizNodeBase):
     id:int
