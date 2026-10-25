@@ -29,19 +29,21 @@ class QuizGenerator:
             {format_instructions}
             """
         ),])
-        chain = prompt | llm | quiz_parser
-        quiz_structure=chain.invoke({
-            "theme":theme,
-            "num_questions":num_question,
-            "difficulty":difficulty,
-            "format_instructions":quiz_parser.get_format_instructions(),
+        llm_response = (prompt | llm).invoke({
+            "theme": theme,
+            "num_questions": num_question,
+            "difficulty": difficulty,
+            "format_instructions": quiz_parser.get_format_instructions(),
         })
+        if not isinstance(llm_response.content, str) or not llm_response.content.strip():
+            raise ValueError("The LLM returned an empty response.")
+        quiz_structure = quiz_parser.invoke(llm_response)
         try:
             quiz_db=Quiz(title=quiz_structure.title,theme=quiz_structure.theme,session_id=session_id)
             db.add(quiz_db)
             db.flush()
-            for question_data in quiz_structure.questions:
-                cls._process_story_node(db,quiz_db.id,question_data)
+            for index, question_data in enumerate(quiz_structure.questions, start=1):
+                cls._process_story_node(db,quiz_db.id,question_data,question_order=index)
             db.commit()
             db.refresh(quiz_db)
             return quiz_db
@@ -50,13 +52,13 @@ class QuizGenerator:
             raise
 
     @classmethod
-    def _process_story_node(cls,db:Session,quiz_id:int,question_data:QuizQuestionLLM):
+    def _process_story_node(cls,db:Session,quiz_id:int,question_data:QuizQuestionLLM,question_order: int):
         option=QuizNode(
             quiz_id=quiz_id,
-            question=question_data.question if hasattr(question_data,"question") else question_data["question"],
+            question=question_data.question,
             options=[option.model_dump() for option in question_data.option],
             correct_answer=question_data.correct_answer,
-            question_order=question_data.order,
+            question_order=question_order,
             explanation=question_data.explanation
         )
         db.add(option)
