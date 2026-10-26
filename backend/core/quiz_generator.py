@@ -12,7 +12,7 @@ from core.models import QuizContentLLM,QuizQuestionLLM
 class QuizGenerator:
     @classmethod
     def _get_llm_(cls):
-        return ChatOpenAI(model="nvidia/nemotron-3.5-super-vl:free",base_url="https://openrouter.ai/api/v1",api_key=settings.OPENROUTER_API_KEY,temperature=0.7)
+        return ChatOpenAI(model="nvidia/nemotron-3.5-super-vl:free",base_url="https://openrouter.ai/api/v1",api_key=settings.OPENROUTER_API_KEY,temperature=0.3,timeout=90,max_retries=2,)
     @classmethod
     def generate_quiz(cls, db:Session,session_id:str, theme:str,num_question:int=10,difficulty:str="medium")->Quiz:
         llm=cls._get_llm_()
@@ -43,19 +43,19 @@ class QuizGenerator:
             db.add(quiz_db)
             db.flush()
             for index, question_data in enumerate(quiz_structure.questions, start=1):
-                cls._process_story_node(db,quiz_db.id,question_data,question_order=index)
+                cls._process_quiz_questions(db,quiz_db.id,question_data,question_order=index)
             db.commit()
             db.refresh(quiz_db)
             return quiz_db
-        except:
+        except Exception:
             db.rollback()
             raise
 
     @classmethod
-    def _process_story_node(cls,db:Session,quiz_id:int,question_data:QuizQuestionLLM,question_order: int):
+    def _process_quiz_questions(cls,db:Session,quiz_id:int,question_data:QuizQuestionLLM,question_order: int):
         option=QuizNode(
             quiz_id=quiz_id,
-            question=question_data.question,
+            questions=question_data.question,
             options=[option.model_dump() for option in question_data.option],
             correct_answer=question_data.correct_answer,
             question_order=question_order,

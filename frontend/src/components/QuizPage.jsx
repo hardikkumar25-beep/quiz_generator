@@ -20,7 +20,7 @@ function QuizPage({quiz, onNewQuiz}){
     const currentQuestion=quiz.questions[currentQuestionIndex];
     const options=currentQuestion.options;
     const isCorrect=selectedAnswer===currentQuestion.correct_answer;
-    const score=answers.filter((answer)=>answers.isCorrect).length;
+    const score=answers.filter((answer)=>answer.isCorrect).length;
     const chooseAnswer=(answerText)=>{
         if (!isAnswerSubmitted){
             setSelectedAnswer(answerText);
@@ -42,6 +42,23 @@ function QuizPage({quiz, onNewQuiz}){
             },
         ]);
         setIsAnswerSubmitted(true);
+    };
+    const nextQuestion = () => {
+        if (currentQuestionIndex === quiz.nodes.length - 1) {
+            setIsFinished(true);
+            return;
+        }
+
+        setCurrentQuestionIndex((previousIndex) => previousIndex + 1);
+        setSelectedAnswer(null);
+        setIsAnswerSubmitted(false);
+    };
+    const restartQuiz = () => {
+    setCurrentQuestionIndex(0);
+    setSelectedAnswer(null);
+    setIsAnswerSubmitted(false);
+    setAnswers([]);
+    setIsFinished(false);
     };
     if (isFinished){
         return (
@@ -74,7 +91,7 @@ function QuizPage({quiz, onNewQuiz}){
                         {options.map((option,index)=>(
                             <button
                             key={index}
-                            onClick={()=>chooseAnswer(options.text)}
+                            onClick={()=>chooseAnswer(option.text)}
                             disabled={isAnswerSubmitted}
                             className={
                                 selectedAnswer===option.text? "option-btn selected":"option-btn"

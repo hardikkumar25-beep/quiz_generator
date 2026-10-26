@@ -54,7 +54,7 @@ def generate_quiz_task(job_id:str,session_id:str,theme:str,num_question:int=10,d
     finally:
         db.close()
 
-@router.get("{quiz_id}/complete",response_model=CompleteQuizResponse)
+@router.get("/{quiz_id}/complete",response_model=CompleteQuizResponse)
 def get_complete_quiz(quiz_id:int,db:Session=Depends(get_db)):
     quiz=db.query(Quiz).filter(Quiz.id==quiz_id).first()
     if not quiz:
@@ -63,20 +63,20 @@ def get_complete_quiz(quiz_id:int,db:Session=Depends(get_db)):
     return complete_quiz
 
 def build_complete_quiz(db: Session,quiz: Quiz) -> CompleteQuizResponse:
-    nodes = (db.query(QuizNode).filter(QuizNode.quiz_id == quiz.id).order_by(QuizNode.question_order).all())
-    node_responses = [
+    questions = (db.query(QuizNode).filter(QuizNode.quiz_id == quiz.id).order_by(QuizNode.question_order).all())
+    question_responses = [
         CompleteQuizNodeResponse(
-            id=node.id,
-            question=node.question,
-            option=node.options,
-            correct_answer=node.correct_answer,
-            order=node.question_order,
-            explanation=node.explanation
-        ) for node in nodes]
+            id=question.id,
+            question=question.questions,
+            options=question.options,
+            correct_answer=question.correct_answer,
+            order=question.question_order,
+            explanation=question.explanation
+        ) for question in questions]
     return CompleteQuizResponse(
         id=quiz.id,
         title=quiz.title,
         theme=quiz.theme,
         session_id=quiz.session_id,
         created_at=quiz.created_at,
-        nodes=node_responses)
+        questions=question_responses)

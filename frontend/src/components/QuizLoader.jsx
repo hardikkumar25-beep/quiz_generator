@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import {useParams, useNavigate} from "react-router-dom";
 import axios from "axios";
 import LoadingStatus from "./LoadingStatus.jsx";
+import QuizPage from "./QuizPage.jsx";
 
 const API_BASE_URL="/api"
 function QuizLoader(){
@@ -48,11 +49,12 @@ if (error){
         </div>
     </div>);
 }
-if (quiz){
-    return (<div className="quiz-loader">
-        <h1>{quiz.title}</h1>
-        {/* Render quiz questions here */}
-    </div>);
+if (quiz) {
+    return (
+        <QuizPage
+            quiz={quiz}
+            onNewQuiz={createNewQuiz}
+        />);
 }
     return null;
 }
