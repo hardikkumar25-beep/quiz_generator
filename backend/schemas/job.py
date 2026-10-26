@@ -3,7 +3,7 @@ from datetime import datetime
 from pydantic import BaseModel,ConfigDict,Field
 
 class QuizJobBase(BaseModel):
-    theme:str
+    title:str
 
 class QuizJobResponse(BaseModel):
     job_id:str

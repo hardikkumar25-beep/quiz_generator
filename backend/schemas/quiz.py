@@ -18,10 +18,9 @@ class CompleteQuizNodeResponse(QuizNodeBase):
 
 class QuizBase(BaseModel):
     title:str
-    theme:str
 
 class CreateQuizRequest(BaseModel):
-    theme:str
+    title:str
     num_questions:int=Field(default=10,ge=1,le=50)
     difficulty:str="medium" 
 

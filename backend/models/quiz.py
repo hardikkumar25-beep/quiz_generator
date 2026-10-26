@@ -8,7 +8,6 @@ class Quiz(Base):
 
     id=Column(Integer,primary_key=True,index=True)
     title=Column(String,index=True,nullable=False)
-    theme = Column(String, nullable=False)
     session_id=Column(String,index=True,nullable=True)
     created_at=Column(DateTime(timezone=True),server_default=func.now(),nullable=False)
 

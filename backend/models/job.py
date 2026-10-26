@@ -9,7 +9,7 @@ class QuizJob(Base):
     id=Column(Integer,primary_key=True,index=True)
     job_id=Column(String,index=True,unique=True,nullable=False)
     session_id=Column(String,index=True)
-    theme=Column(String,nullable=False)
+    title=Column(String,nullable=False)
     status=Column(String,nullable=False)
     quiz_id=Column(Integer,ForeignKey("quizzes.id"),nullable=True)
     error=Column(String,nullable=True)

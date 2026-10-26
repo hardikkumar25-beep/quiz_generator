@@ -14,7 +14,7 @@ class QuizGenerator:
     def _get_llm_(cls):
         return ChatOpenAI(model="nvidia/nemotron-3.5-super-vl:free",base_url="https://openrouter.ai/api/v1",api_key=settings.OPENROUTER_API_KEY,temperature=0.3,timeout=90,max_retries=2,)
     @classmethod
-    def generate_quiz(cls, db:Session,session_id:str, theme:str,num_question:int=10,difficulty:str="medium")->Quiz:
+    def generate_quiz(cls, db:Session,session_id:str, title:str,num_question:int=10,difficulty:str="medium")->Quiz:
         llm=cls._get_llm_()
         quiz_parser=PydanticOutputParser(pydantic_object=QuizContentLLM)
         prompt=ChatPromptTemplate.from_messages([
@@ -23,14 +23,14 @@ class QuizGenerator:
             "human",
             """
             Generate a quiz with these settings:
-            Theme: {theme}
+            Title: {title}
             Number of questions: {num_questions}
             Difficulty: {difficulty}
             {format_instructions}
             """
         ),])
         llm_response = (prompt | llm).invoke({
-            "theme": theme,
+            "title": title,
             "num_questions": num_question,
             "difficulty": difficulty,
             "format_instructions": quiz_parser.get_format_instructions(),
@@ -39,7 +39,7 @@ class QuizGenerator:
             raise ValueError("The LLM returned an empty response.")
         quiz_structure = quiz_parser.invoke(llm_response)
         try:
-            quiz_db=Quiz(title=quiz_structure.title,theme=quiz_structure.theme,session_id=session_id)
+            quiz_db=Quiz(title=quiz_structure.title,session_id=session_id)
             db.add(quiz_db)
             db.flush()
             for index, question_data in enumerate(quiz_structure.questions, start=1):

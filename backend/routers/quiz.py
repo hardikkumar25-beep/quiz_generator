@@ -24,14 +24,14 @@ def create_quiz(request: CreateQuizRequest,background_tasks:BackgroundTasks,resp
     job_id=str(uuid.uuid4())
     job=QuizJob(job_id=job_id,
                 session_id=session_id,
-                theme=request.theme,
+                title=request.title,
                 status="pending")
     db.add(job)
     db.commit()
-    background_tasks.add_task(generate_quiz_task,job_id=job_id,session_id=session_id,theme=request.theme,num_question=request.num_questions,difficulty=request.difficulty)
+    background_tasks.add_task(generate_quiz_task,job_id=job_id,session_id=session_id,title=request.title,num_question=request.num_questions,difficulty=request.difficulty)
     return job
 
-def generate_quiz_task(job_id:str,session_id:str,theme:str,num_question:int=10,difficulty:str="medium"):
+def generate_quiz_task(job_id:str,session_id:str,title:str,num_question:int=10,difficulty:str="medium"):
     db=SessionLocal()
     try:
         job=db.query(QuizJob).filter(QuizJob.job_id==job_id).first()
@@ -41,7 +41,7 @@ def generate_quiz_task(job_id:str,session_id:str,theme:str,num_question:int=10,d
             job.status="processing"
             db.commit()
             print("Starting quiz generation...")
-            quiz=QuizGenerator.generate_quiz(db,session_id,theme,num_question,difficulty) 
+            quiz=QuizGenerator.generate_quiz(db,session_id,title,num_question,difficulty) 
             job.quiz_id=quiz.id
             job.status="completed"
             job.completed_at=datetime.now()
@@ -76,7 +76,6 @@ def build_complete_quiz(db: Session,quiz: Quiz) -> CompleteQuizResponse:
     return CompleteQuizResponse(
         id=quiz.id,
         title=quiz.title,
-        theme=quiz.theme,
         session_id=quiz.session_id,
         created_at=quiz.created_at,
         questions=question_responses)
