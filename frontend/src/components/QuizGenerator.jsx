@@ -73,7 +73,7 @@ function QuizGenerator() {
                 `${API_BASE_URL}/quizzes/create`,
                 {
                     title: title,
-                    num_questions: Number(numQuestions),
+                    num_questions: Number(numQuestions ?? 10),
                     difficulty,
                 }
             );

@@ -44,7 +44,7 @@ function QuizPage({quiz, onNewQuiz}){
         setIsAnswerSubmitted(true);
     };
     const nextQuestion = () => {
-        if (currentQuestionIndex === quiz.nodes.length - 1) {
+        if (currentQuestionIndex === quiz.questions.length - 1) {
             setIsFinished(true);
             return;
         }
