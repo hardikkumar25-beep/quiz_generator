@@ -12,7 +12,7 @@ class Quiz(Base):
     session_id=Column(String,index=True,nullable=True)
     created_at=Column(DateTime(timezone=True),server_default=func.now(),nullable=False)
 
-    nodes=relationship(argument="QuizNode",back_populates="quiz")
+    questions=relationship(argument="QuizNode",back_populates="quiz")
 
 class QuizNode(Base):
     __tablename__="quiz_nodes"
@@ -25,5 +25,5 @@ class QuizNode(Base):
     question_order = Column(Integer, nullable=False)
     explanation = Column(String, nullable=True)
 
-    quiz=relationship(argument="Quiz",back_populates="nodes")
+    quiz=relationship(argument="Quiz",back_populates="questions")
 

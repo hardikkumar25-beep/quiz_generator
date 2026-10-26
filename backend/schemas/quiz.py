@@ -7,7 +7,7 @@ class QuizOptionsSchema(BaseModel):
 
 class QuizNodeBase(BaseModel):
     question:str
-    option:List[QuizOptionsSchema]
+    options:List[QuizOptionsSchema]
     correct_answer:str
     order:Optional[int]=None
     explanation:str
@@ -29,5 +29,5 @@ class CompleteQuizResponse(QuizBase):
     id:int
     session_id:str |None=None
     created_at:datetime
-    nodes: list[CompleteQuizNodeResponse]
+    questions: list[CompleteQuizNodeResponse]
     model_config = ConfigDict(from_attributes=True)
