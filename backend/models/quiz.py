@@ -19,7 +19,7 @@ class QuizNode(Base):
 
     id=Column(Integer,primary_key=True,index=True)
     quiz_id=Column(Integer,ForeignKey("quizzes.id"),index=True,nullable=False)
-    question=Column(String,nullable=False)
+    questions=Column(String,nullable=False)
     options=Column(JSON,nullable=False)
     correct_answer = Column(String, nullable=False)
     question_order = Column(Integer, nullable=False)
